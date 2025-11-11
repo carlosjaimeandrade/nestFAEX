@@ -188,7 +188,7 @@ bootstrap();
 - Chama o `class-validator`
 - E dispara o erro 400 automaticamente se algo estiver inválido.
 
----
+
 
 ## ⚠️ Personalizando erros
 
@@ -206,3 +206,199 @@ import { Injectable, BadRequestException, NotFoundException } from '@nestjs/comm
 | Acesso negado | `throw new ForbiddenException()` | 403 | Permissão insuficiente |
 | Não encontrado | `throw new NotFoundException('Usuário não encontrado')` | 404 | Recurso inexistente |
 | Genérico | `throw new HttpException('Falha', HttpStatus.INTERNAL_SERVER_ERROR)` | 500 | Erro geral |
+
+
+###  MONGODB NO NEST
+
+# 🗄️ Guia Completo de Instalação e Uso do MongoDB + NestJS
+
+## 🚀 Instalação do MongoDB e Ferramentas
+
+### 🧩 Baixe o MongoDB Compass
+🔗 [https://www.mongodb.com/try/download/compass](https://www.mongodb.com/try/download/compass)
+
+> **MongoDB Compass** é a interface gráfica oficial do MongoDB — uma ferramenta visual que te permite explorar, gerenciar e manipular seus bancos de dados de forma simples, sem precisar usar comandos no terminal.
+
+### ☁️ Crie uma conta no MongoDB Atlas
+Crie uma conta gratuita no [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) para ter um banco de dados na nuvem.
+
+### 💾 Baixe o MongoDB Community Server
+🔗 [https://www.mongodb.com/try/download/community](https://www.mongodb.com/try/download/community)
+
+Após a instalação, execute o arquivo:
+```
+C:\Program Files\MongoDB\Server\8.2\bin\mongod
+```
+> Isso iniciará o servidor MongoDB local.
+
+### 🧭 Conecte-se ao servidor no MongoDB Compass
+Abra o Compass e crie uma nova conexão com a URL:
+```
+mongodb://localhost:27017
+```
+
+---
+
+## 🧠 Antes de conectar — entendendo a diferença entre ORM e ODM
+
+### 🔹 1. O que é ORM (Object Relational Mapper)
+
+O **ORM** (*Object Relational Mapping*) é uma técnica (ou biblioteca) que faz a **ponte entre os objetos do seu código** e as **tabelas de um banco de dados relacional (SQL)**.
+
+👉 Em outras palavras, ele converte **classes e objetos** em **linhas e colunas** no banco.
+
+Exemplo de ORM:  
+- **Sequelize**, **TypeORM**, **Prisma** (para MySQL, PostgreSQL, etc.)
+
+---
+
+### 🔹 2. O que é ODM (Object Document Mapper)
+
+O **ODM** (*Object Document Mapping*) é o equivalente do ORM, mas para **bancos de dados orientados a documentos**, como o **MongoDB**.
+
+👉 Ele converte **objetos do código** em **documentos JSON (ou BSON)** armazenados no banco.
+
+
+| Conceito | MySQL | MongoDB | Explicação |
+|-----------|--------|----------|-------------|
+| Banco de Dados | Database | Database | Conjunto principal que armazena todas as tabelas (MySQL) ou coleções (MongoDB). |
+| Tabela | Table | Collection | Agrupa registros do mesmo tipo. |
+| Linha | Row | Document | Cada registro dentro da tabela/coleção. |
+| Coluna | Column | Field | Nome de uma propriedade dentro de um documento. |
+| Valor | Cell Value | Value | Conteúdo real armazenado. |
+| Chave Primária | id | _id: ObjectId(...) | Identificador único gerado automaticamente. |
+| Relacionamento | Foreign Key | ObjectId ou Embedded Document | Mongo usa referências ou documentos embutidos. |
+| Estrutura | Fixa | Flexível | No MySQL, a estrutura é fixa; no Mongo, pode variar. |
+| Consulta | SQL | BSON/JSON | SQL usa comandos, Mongo usa objetos JSON. |
+| Join | JOIN | populate() | Mongo faz junções via referências. |
+
+---
+
+## 🧠 Comandos básicos do MongoDB
+
+| Categoria | Comando | Explicação | Exemplo |
+|------------|----------|-------------|----------|
+| Criar/Selecionar banco | `use nomeDoBanco` | Cria ou muda para o banco especificado | `use escola` |
+| Ver bancos | `show dbs` | Lista todos os bancos de dados | — |
+| Ver coleções | `show collections` | Mostra as coleções do banco atual | — |
+| Criar coleção | `db.createCollection("nome")` | Cria uma nova coleção | `db.createCollection("users")` |
+| Inserir documento | `db.users.insertOne({...})` | Insere um documento | `db.users.insertOne({ nome: "Ana", idade: 20 })` |
+| Buscar todos | `db.users.find()` | Lista todos os documentos | `db.users.find()` |
+| Buscar por filtro | `db.users.find({ campo: valor })` | Busca documentos com base em condição | `db.users.find({ nome: "Ana" })` |
+| Atualizar documento | `db.users.updateOne(filtro, { $set: {...} })` | Atualiza um documento | `db.users.updateOne({ nome: "Ana" }, { $set: { idade: 22 } })` |
+| Excluir documento | `db.users.deleteOne(filtro)` | Remove o primeiro documento correspondente | `db.users.deleteOne({ nome: "João" })` |
+| Contar documentos | `db.users.countDocuments()` | Conta quantos documentos existem | `db.users.countDocuments()` |
+
+---
+
+## ⚙️ Conectando o MongoDB no NestJS
+
+### Instalar o Mongoose ODM
+```bash
+npm install @nestjs/mongoose mongoose
+```
+
+### Configurar o AppModule
+```ts
+import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { UsersModule } from './users/users.module';
+
+@Module({
+  imports: [
+    MongooseModule.forRoot('mongodb://localhost:27017/meuBanco'),
+    UsersModule,
+  ],
+})
+export class AppModule {}
+```
+
+---
+
+## 📘 Criando o Schema `users`
+
+Crie o arquivo `src/users/schema/users.schema.ts`:
+
+```ts
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
+
+@Schema()
+export class Users extends Document {
+  @Prop()
+  nome: string;
+
+  @Prop()
+  email: string;
+}
+
+export const UsersSchema = SchemaFactory.createForClass(Users);
+```
+---
+  @Prop() diz ao Nest + Mongoose que esse campo deve existir dentro do documento salvo no MongoDB.
+  @Schema() → indica que essa classe representa um schema MongoDB
+
+---
+
+## 🔗 Ligando o Schema ao Service
+
+```ts
+import { Model } from 'mongoose';
+import { Users } from './users.schema';
+import { InjectModel } from '@nestjs/mongoose';
+
+constructor(@InjectModel(Users.name) private usersModel: Model<Users>) {}
+```
+---
+ 
+  O @InjectModel() é um decorator de injeção de dependência do NestJS
+  usado para injetar o Model (modelo do Mongoose) dentro de um service.
+  Em resumo:
+
+  Ele permite que você use a coleção do MongoDB (via Mongoose) dentro de uma classe do NestJS, como o Service.
+
+---
+
+## 🧩 Registrando o Schema no Módulo
+
+Arquivo `src/users/users.module.ts`:
+
+```ts
+import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
+import { Users, UsersSchema } from './schema/users.schema';
+
+@Module({
+  imports: [
+    MongooseModule.forFeature([{ name: Users.name, schema: UsersSchema }])
+  ],
+  controllers: [UsersController],
+  providers: [UsersService],
+})
+export class UsersModule {}
+```
+
+---
+
+## 🧪 Testando a Inserção
+
+```ts
+await this.usersModel.create({
+  nome: "test",
+  email: "teste@email.com"
+});
+```
+
+---
+
+## 🧱 Sobre o campo `__v`
+
+O campo `__v` é adicionado automaticamente pelo Mongoose e serve como **controle de versão** do documento.  
+Cada vez que você executa um `.save()`, o valor de `__v` é incrementado.
+
+Pode ser desativado com:
+```ts
+@Schema({ versionKey: false })
+```
