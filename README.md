@@ -68,7 +68,40 @@ import {
   Res
 } from '@nestjs/common';
 ```
+## ⚙️ Exemplo de uso decoradores do Nest:
+```ts
+import { Controller, Get, Param, Query, Post, Body } from '@nestjs/common';
+export class UsersController {
+    constructor(
+        private usersService: UsersService,
+        @InjectModel(Users.name) private users: Model<Users>
+    ) {}
+    ...
+    @Get()
+    findAll(@Query() query: UserQuery) {
+        return {
+            name: query.name,
+            age: query.age
+        }
+    }
 
+    @Post()
+    async create (@Body() body: CreateUserDto) {
+        const numero = this.usersService.test()
+
+        await this.users.create({
+            nome: "test",
+            email: "teste"
+        })
+
+        return {
+            name: body.name,
+            age: body.age, 
+            numero
+        }
+    }
+  ...
+```
 ---
 
 ## 🧩 Uso do Class Validator
@@ -158,6 +191,19 @@ e o **class-transformer** converte o `body` (JSON) para uma instância da classe
 
 ---
 
+## ⚙️ Exemplo de uso create-user.dto
+```ts
+import {IsString, IsNumber} from "class-validator"
+
+export class CreateUserDto {
+    @IsString()
+    name: string
+
+    @IsNumber()
+    age: number
+}
+```
+
 ## ⚙️ Ativando validação global (main.ts)
 
 No arquivo `main.ts`:
@@ -192,10 +238,6 @@ bootstrap();
 
 ## ⚠️ Personalizando erros
 
-Importe as exceções de:
-```ts
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
-```
 
 ### Resumo rápido
 
@@ -207,8 +249,18 @@ import { Injectable, BadRequestException, NotFoundException } from '@nestjs/comm
 | Não encontrado | `throw new NotFoundException('Usuário não encontrado')` | 404 | Recurso inexistente |
 | Genérico | `throw new HttpException('Falha', HttpStatus.INTERNAL_SERVER_ERROR)` | 500 | Erro geral |
 
-
-###  MONGODB NO NEST
+Importe as exceções de:
+```ts
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+...
+export class UsersService {
+    test() {
+        throw new BadRequestException('ocorreu um erro')
+        ...
+    }
+    ...
+}
+```
 
 # 🗄️ Guia Completo de Instalação e Uso do MongoDB + NestJS
 
