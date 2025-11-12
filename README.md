@@ -10,6 +10,51 @@ O NestJS usa um sistema de Dependency Injection, o que facilita o reaproveitamen
 ## Compatível com bibliotecas do ecossistema Node.js
 Ele integra facilmente com Express (por padrão) ou Fastify (para melhor performance).
 
+# 🚀 Programação Orientada a Objetos (POO)
+A Programação Orientada a Objetos (POO) é um paradigma de programação que organiza o código em objetos — estruturas que representam entidades do mundo real, combinando dados (atributos) e comportamentos (métodos).
+
+Em vez de criar funções soltas, você cria classes que modelam conceitos como “Usuário”, “Produto” ou “Pedido”.
+Essas classes servem como modelos (ou “moldes”) para criar instâncias — os objetos em si.
+
+##  POO no NestJS
+
+O NestJS é um framework fortemente baseado em orientação a objetos, pois:
+
+Usa classes para criar controllers, services e modules.
+
+Utiliza decorators (@Controller, @Injectable, @Module) para dar contexto às classes.
+
+Trabalha com injeção de dependência (instancia automaticamente classes dentro de outras).
+
+```ts
+class Usuario {
+  constructor(
+    private nome: string,
+    private idade: number
+  ) {}
+
+  apresentar() {
+    return `Olá, meu nome é ${this.nome} e tenho ${this.idade} anos.`;
+  }
+}
+
+// Criando um objeto (instância)
+const user1 = new Usuario('Carlos', 30);
+console.log(user1.apresentar());
+
+// Criando um segundo objeto (instância)
+const user2 = new Usuario('Jose', 31);
+console.log(user2.apresentar());
+
+```
+🔹 Aqui, Usuario é uma classe (modelo), e user é uma instância (objeto real criado a partir dela).
+
+🔹O constructor (ou construtor) é um método especial de uma classe que é executado automaticamente quando você cria uma nova instância dessa classe.
+
+👉 Em outras palavras:
+Ele inicializa o objeto, define seus valores iniciais e prepara tudo o que ele precisa para funcionar.
+
+🔹O nest foi projetado para trabalhar com POO
 
 # 🚀 Guia de Instalação e Uso do Nest.js
 
