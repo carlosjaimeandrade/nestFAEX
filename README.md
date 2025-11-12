@@ -1,3 +1,16 @@
+
+# 🚀 Principais Características do NestJS
+O NestJS é um framework poderoso para Node.js que utiliza TypeScript e uma arquitetura modular. Abaixo estão suas principais características:
+## Baseado em módulos
+O NestJS organiza o código em módulos (modules), controladores (controllers) e serviços (services), tornando o projeto mais estruturado e fácil de entender.
+## Suporte nativo a TypeScript
+O TypeScript fornece tipagem estática, autocompletar e detecção de erros em tempo de compilação.
+## Injeção de dependência (DI)
+O NestJS usa um sistema de Dependency Injection, o que facilita o reaproveitamento e o teste de componentes.
+## Compatível com bibliotecas do ecossistema Node.js
+Ele integra facilmente com Express (por padrão) ou Fastify (para melhor performance).
+
+
 # 🚀 Guia de Instalação e Uso do Nest.js
 
 ## 🔧 Instalar o CLI globalmente
