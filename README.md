@@ -512,3 +512,47 @@ Pode ser desativado com:
 ```ts
 @Schema({ versionKey: false })
 ```
+
+## Função de cada camada no nest
+
+# ✔ Controller
+
+Recebe a requisição HTTP
+
+Extrai parâmetros (@Body, @Param, @Query)
+
+Chama o service
+
+Não contém lógica de negócio
+
+Não decide regras, nem faz validações de banco
+
+Só retorna o resultado do service para o cliente
+
+# ✔ Service
+
+Contém toda lógica de negócio
+
+Valida dados
+
+Chama o repository
+
+Decide o que retornar
+
+Lança exceções (NotFoundException, BadRequestException, etc.)
+
+# ✔ Repository
+
+Acessa o banco
+
+CRUD puro (sem regra)
+
+```js
+Request → Controller → Service → Repository → Database
+                         ↑
+                     (retorno)
+```
+
+## Comandos do mongose
+
+https://mongoosejs.com/docs/queries.html
