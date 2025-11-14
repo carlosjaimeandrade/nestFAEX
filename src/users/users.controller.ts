@@ -1,36 +1,69 @@
-import { Controller, Post, Get, Param, Query, Body } from '@nestjs/common';
+import { Controller, Post, Get, Param, Query, Body, Delete, Patch } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
-
+import { UsersParamDto } from './dto/users-param.dto';
 
 @Controller('users')
 export class UsersController {
     constructor(private usersService: UsersService){ 
-
     }
 
     @Post()
-    create(@Body() body: CreateUserDto): Object {
-        this.usersService.create()
+    async create(@Body() body: CreateUserDto): Promise<Object> {
         
+        const users = await this.usersService.create(body)
+
         return {
-            body,
-            message: "Usuário criado com sucesso!"
+            message: "cadastrado com sucesso",
+            user: {
+                email: users.email,
+                name: users.name
+            }
         }
     }
 
-    @Get('/:id')
-    get(@Param('id') id: string) {
+    @Get()
+    async getAll() {
+        const users = await this.usersService.getAll()
+
         return {
-            id,
-            message: "Usuário recuperado com sucesso!"
+            message: "Consulta realizada!",
+            total: users.length,
+            users,
+
+        }
+    }
+
+    //verificar o dto de params
+    @Get('/:id')
+    async get(@Param() param: UsersParamDto) {
+        const user = await this.usersService.getById(param.id)
+
+        return {
+            message: "Consulta realizad com sucesso",
+            user
         }
     }  
-    
-    @Get()
-    getAll() {
+
+    @Delete('/:id')
+    async delete(@Param() param: UsersParamDto)
+    {
+        const user = await this.usersService.delete(param.id)
         return {
-            message: "Todos usuários recuperados com sucesso!"
+            message: "usuário deletado com sucesso",
+            user
+        }
+    }
+
+    @Patch('/:id')
+    async update(
+        @Param() param: UsersParamDto,
+        @Body() body: Partial<CreateUserDto>
+    ) {
+        const user = await this.usersService.update(param.id, body)
+        return {
+            message: "usuário atualizado com sucesso",
+            user
         }
     }
 }
