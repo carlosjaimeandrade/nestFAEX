@@ -1,0 +1,644 @@
+﻿
+:root {
+  font-family: "Inter", "Space Grotesk", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #f1f1ff;
+  background: #0c0c14;
+  line-height: 1.5;
+  font-weight: 400;
+  --accent: #a87cff;
+  --accent-soft: #6ad7ff;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(125% 125% at 50% 10%, #2b0d52 0%, #0d1119 45%, #07070f 100%);
+  color: inherit;
+}
+
+.bg-texture {
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 0);
+  background-size: 120px 120px;
+  opacity: 0.45;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app-shell {
+  position: relative;
+  z-index: 1;
+  width: min(1200px, 92vw);
+  margin: 0 auto;
+  padding: 3.5rem 0 4rem;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 0;
+  gap: 1.5rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.brand-emoji {
+  font-size: 2rem;
+}
+
+.brand strong {
+  display: block;
+  font-size: 1.1rem;
+}
+
+.brand small {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.nav-btn {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: inherit;
+  background: rgba(5, 5, 9, 0.3);
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  font: inherit;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.nav-btn.active,
+.nav-btn:hover {
+  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.session-chip {
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 0.9rem;
+}
+
+.view {
+  display: none;
+  margin-top: 2rem;
+}
+
+.view.active {
+  display: block;
+}
+
+.login-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+  align-items: center;
+}
+
+.login-copy ul {
+  margin: 1rem 0 0;
+  padding-left: 1.2rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.login-card header h2 {
+  margin: 0.2rem 0 0.6rem;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.login-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.login-form input[type="email"],
+.login-form input[type="password"] {
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.85rem 1rem;
+  background: rgba(6, 6, 16, 0.6);
+  color: #fff;
+}
+
+.remember {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 0.5rem !important;
+}
+
+.login-form .primary {
+  width: 100%;
+}
+
+.admin-view .hero {
+  margin-top: 1rem;
+}
+
+.booking-view .booking-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.cal-slot {
+  padding: 1rem 1.3rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  text-align: right;
+}
+
+.cal-slot strong {
+  display: block;
+  font-size: 1.1rem;
+}
+
+.booking-layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 2rem;
+}
+
+.booking-info ul {
+  padding-left: 1.1rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 1rem;
+}
+
+.booking-card {
+  background: rgba(15, 16, 40, 0.8);
+}
+.hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 2.5rem;
+  border-radius: 32px;
+  background: linear-gradient(120deg, rgba(64, 38, 122, 0.85), rgba(15, 16, 54, 0.9));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 25px 45px rgba(7, 4, 21, 0.8);
+}
+
+.hero h1 {
+  margin: 0.25rem 0 0.5rem;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(2rem, 3vw, 2.8rem);
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.75rem;
+  color: rgba(248, 249, 255, 0.7);
+  margin: 0;
+}
+
+.hero-card {
+  background: rgba(5, 5, 9, 0.4);
+  border-radius: 20px;
+  padding: 1.3rem;
+  text-align: center;
+  font-weight: 600;
+  display: grid;
+  place-items: center;
+  min-width: 180px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.hero-card span {
+  font-size: 2rem;
+}
+
+.layout {
+  margin-top: 2.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.panel-header h2 {
+  margin: 0.25rem 0 0;
+  font-family: "Space Grotesk", sans-serif;
+}
+
+.ghost-button,
+.primary,
+.icon {
+  border: none;
+  border-radius: 999px;
+  font: inherit;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.ghost-button {
+  padding: 0.5rem 1.1rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: inherit;
+}
+
+.ghost-button:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.primary {
+  padding: 0.75rem 1.3rem;
+  color: #050507;
+  background: linear-gradient(120deg, var(--accent), var(--accent-soft));
+  font-weight: 600;
+  border-radius: 16px;
+}
+
+.primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(72, 93, 255, 0.3);
+}
+
+.card {
+  background: rgba(6, 7, 18, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 28px;
+  padding: 1.6rem;
+  box-shadow: 0 35px 60px rgba(4, 5, 14, 0.65);
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-bottom: 1rem;
+}
+
+.field-group label {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.field-group input,
+.field-group textarea,
+.field-grid input,
+.field-grid select {
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(10, 10, 20, 0.6);
+  padding: 0.85rem 1rem;
+  color: #fff;
+  font: inherit;
+}
+
+.field-group textarea,
+textarea {
+  resize: vertical;
+}
+
+.field-group.dual {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  align-items: end;
+}
+
+.field-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.field-grid .checkbox {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.field-grid .checkbox input {
+  width: 18px;
+  height: 18px;
+}
+
+.weekday-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.weekday-picker button {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(10, 10, 20, 0.5);
+  color: inherit;
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  font: inherit;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.weekday-picker button.active {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.weekday-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.weekday-badges span {
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+}
+
+.micro {
+  font-size: 0.75rem;
+}
+
+.field-list header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.muted {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.list-body {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.field-row {
+  border-radius: 18px;
+  padding: 0.9rem 1.1rem;
+  background: rgba(255, 255, 255, 0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.field-row .type {
+  display: inline-flex;
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.actions {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.icon {
+  padding: 0.35rem 0.55rem;
+  background: rgba(255, 255, 255, 0.08);
+  color: inherit;
+  border-radius: 12px;
+}
+
+.icon:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.preview-card {
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.preview-hero {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.hero-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 2rem;
+}
+
+.preview-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.preview-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.preview-field input,
+.preview-field textarea,
+.preview-field select {
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(6, 7, 18, 0.7);
+  color: #fff;
+  padding: 0.85rem 1rem;
+  font: inherit;
+}
+
+.preview-field input:focus,
+.preview-field textarea:focus,
+.preview-field select:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.25);
+}
+
+.preview-form button[type="submit"] {
+  margin-top: 0.5rem;
+  align-self: flex-start;
+}
+
+.live-pill {
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(255, 82, 119, 0.2);
+  border: 1px solid rgba(255, 82, 119, 0.5);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+}
+
+.submissions header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.log {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.log-entry {
+  padding: 0.9rem 1rem;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.log-entry strong {
+  display: block;
+  font-weight: 600;
+}
+
+.log-entry span {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.empty {
+  text-align: center;
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 1.5rem;
+}
+
+.toast {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  background: rgba(10, 10, 20, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 0.9rem 1.3rem;
+  border-radius: 16px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 1000px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .top-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nav-buttons {
+    width: 100%;
+  }
+
+  .nav-btn {
+    flex: 1;
+    text-align: center;
+  }
+
+  .login-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-hero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .hero {
+    flex-direction: column;
+  }
+
+  .panel-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .preview-card,
+  .card {
+    padding: 1.2rem;
+  }
+
+  .hero-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 1.6rem;
+  }
+}
+

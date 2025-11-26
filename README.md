@@ -262,6 +262,67 @@ export class CreateUserDto {
 }
 ```
 
+### Outro exemplo
+
+```ts
+import {IsString, IsEmail, IsArray, IsIn, IsBoolean, IsOptional, ValidateNested } from "class-validator"
+import { Type } from 'class-transformer';
+
+//criando tipo personalizado de dados
+export class SchedulerFieldDto {
+  @IsString()
+  type: string;
+
+  @IsBoolean()
+  required: boolean;
+
+  @IsString()
+  label: string;
+
+  @IsString()
+  placeholder: string;
+
+  @IsOptional()
+  @IsArray()
+  options?: any[];
+}
+
+export class CreateSchedulerConfigDto {
+    @IsString()
+    name: string
+
+    @IsString()
+    description: string;
+
+    @IsString()
+    color: string;
+
+    //podemos usar o isIN para definir alguns valores obrigtorios dentro da lista
+    @IsArray()
+    @IsString({ each: true })
+    @IsIn(["segunda", "terça", "quarta", "quinta", "sexta", "sábado", "domingo"], { each: true })
+    weekdays: string[];
+
+    @IsArray()
+    @Type(() => SchedulerFieldDto) //transforma o JSON bruto que vem no request em objetos no formato que o NestJS (e o class-validator) entendem corretamente.
+    @ValidateNested({ each: true }) //diz que cada item do array deve ser validado baseado na configuração personalizada do dto
+    fields: SchedulerFieldDto[];
+}
+```
+
+```ts
+import { IsBoolean, IsOptional } from 'class-validator';
+import { Transform } from 'class-transformer';
+
+//quando criamos um dto de query params todos os dados vem do tipo string, nesse caso como queremos um dato do tipo boolean podemos converter o dado usando o transform
+export class QueryGetSchedulerDto {
+    @IsBoolean()
+    @IsOptional()
+    @Transform(({ value }) => value === 'true') 
+    status?: boolean;
+}
+```
+
 ## ⚙️ Ativando validação global (main.ts)
 
 No arquivo `main.ts`:

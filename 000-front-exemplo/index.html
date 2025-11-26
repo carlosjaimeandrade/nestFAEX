@@ -1,0 +1,275 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Studio de Agendamentos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="bg-texture"></div>
+  <div class="app-shell">
+    <nav class="top-bar">
+      <div class="brand">
+        <span class="brand-emoji">🌌</span>
+        <div>
+          <strong>Studio Aura</strong>
+          <small>experiências conectadas</small>
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <button class="nav-btn active" data-view-target="login">Login</button>
+        <button class="nav-btn" data-view-target="admin">Admin</button>
+        <button class="nav-btn" data-view-target="agendamento">Agendamento</button>
+      </div>
+      <div class="session-chip" id="sessionChip">Visitante</div>
+    </nav>
+
+    <section class="view login-view active" data-view="login">
+      <div class="login-grid">
+        <div class="login-copy">
+          <p class="eyebrow">Bem-vindo de volta</p>
+          <h1>Acesse o painel e personalize seus fluxos.</h1>
+          <p>Sincronize toda a experiência de agendamento com poucos cliques. Tudo fica salvo localmente para você
+            continuar mais tarde.</p>
+          <ul>
+            <li>Biblioteca de campos flexível;</li>
+            <li>Pré-visualização instantânea;</li>
+            <li>Compartilhamento com o cliente.</li>
+          </ul>
+        </div>
+        <div class="card login-card">
+          <header>
+            <p class="eyebrow">Conta Studio</p>
+            <h2>Login seguro</h2>
+          </header>
+          <form id="loginForm" class="login-form">
+            <label>
+              Email profissional
+              <input type="email" id="loginEmail" name="loginEmail" placeholder="voce@studio.com" required>
+            </label>
+            <label>
+              Senha
+              <input type="password" id="loginPassword" name="loginPassword" placeholder="••••••••" required>
+            </label>
+            <label class="checkbox remember">
+              <input type="checkbox" id="rememberMe" name="rememberMe" checked>
+              <span>Manter conectado</span>
+            </label>
+            <button type="submit" class="primary">Entrar e montar tela</button>
+            <p id="loginStatus" class="muted"></p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="view admin-view" data-view="admin">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Studio de Experiências</p>
+          <h1>Monte e teste sua tela de agendamento</h1>
+          <p>Configure os campos que quiser, personalize cores e compartilhe o link perfeito com seu cliente. Tudo
+            guardado no <strong>localStorage</strong> para continuar depois.</p>
+        </div>
+        <div class="hero-card">
+          <span>🛠️</span>
+          <p>Modo administrador ativo</p>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="panel config-panel">
+          <header class="panel-header">
+            <div>
+              <p class="eyebrow">Painel do admin</p>
+              <h2>Construtor de fluxo</h2>
+            </div>
+            <button id="resetConfig" class="ghost-button" type="button">Restaurar default</button>
+          </header>
+
+          <form id="blueprintForm" class="card">
+            <div class="field-group">
+              <label for="formTitle">Título da tela</label>
+              <input id="formTitle" type="text" placeholder="Ex.: Mentoria UX - agendamento" required>
+            </div>
+            <div class="field-group">
+              <label for="formDescription">Descrição</label>
+              <textarea id="formDescription" rows="3" placeholder="Conte um pouco sobre o atendimento..."></textarea>
+            </div>
+            <div class="field-group dual">
+              <div>
+                <label for="accentColor">Cor de destaque</label>
+                <input id="accentColor" type="color" value="#7f5dff">
+              </div>
+              <div>
+                <label for="heroEmoji">Emoji da capa</label>
+                <input id="heroEmoji" type="text" maxlength="2" placeholder="✨">
+              </div>
+            </div>
+            <div class="field-group">
+              <label>Disponível nos dias</label>
+              <div class="weekday-picker" id="weekdayPicker" aria-label="Selecionar dias da semana"></div>
+              <p class="muted micro">Clique para ativar/desativar cada dia.</p>
+            </div>
+          </form>
+
+          <section class="card">
+            <h3>Adicionar campo</h3>
+            <form id="newFieldForm" class="field-grid">
+              <label>
+                Rótulo
+                <input id="fieldLabel" name="fieldLabel" type="text" placeholder="Nome completo" required>
+              </label>
+              <label>
+                Tipo
+                <select id="fieldType" name="fieldType">
+                  <option value="text">Texto</option>
+                  <option value="email">Email</option>
+                  <option value="tel">Telefone</option>
+                  <option value="number">Número</option>
+                  <option value="date">Data</option>
+                  <option value="time">Hora</option>
+                  <option value="textarea">Área de texto</option>
+                  <option value="select">Seleção</option>
+                </select>
+              </label>
+              <label>
+                Placeholder
+                <input id="fieldPlaceholder" name="fieldPlaceholder" type="text" placeholder="Digite aqui...">
+              </label>
+              <label>
+                Opções (para select)
+                <input id="fieldOptions" name="fieldOptions" type="text" placeholder="opção 1, opção 2">
+              </label>
+              <label class="checkbox">
+                <input id="fieldRequired" name="fieldRequired" type="checkbox" checked>
+                <span>Obrigatório</span>
+              </label>
+              <button type="submit" class="primary">Adicionar</button>
+            </form>
+          </section>
+
+          <section class="card field-list">
+            <header>
+              <h3>Campos ativos</h3>
+              <p class="muted">Arrume a ordem com um clique</p>
+            </header>
+            <div id="fieldsContainer" class="list-body empty">
+              <p class="muted">Nenhum campo configurado ainda.</p>
+            </div>
+          </section>
+        </section>
+
+        <section class="panel preview-panel">
+          <header class="panel-header">
+            <div>
+              <p class="eyebrow">Experiência do convidado</p>
+              <h2>Prévia ao vivo</h2>
+            </div>
+            <div class="live-pill">ao vivo</div>
+          </header>
+          <div class="preview-card">
+            <div class="preview-hero">
+              <div class="hero-icon" id="heroEmojiPreview">✨</div>
+              <div>
+                <h3 id="previewTitle">Título aqui</h3>
+                <p id="previewDescription">Descrição do fluxo.</p>
+              </div>
+            </div>
+            <div class="weekday-badges" id="previewWeekdays"></div>
+            <form id="bookingForm" class="preview-form"></form>
+          </div>
+          <section class="card submissions">
+            <header>
+              <h3>Últimas simulações</h3>
+              <button id="clearSubmissions" type="button" class="ghost-button">Limpar histórico</button>
+            </header>
+            <div id="submissionsLog" class="log"></div>
+          </section>
+        </section>
+      </main>
+    </section>
+
+    <section class="view booking-view" data-view="agendamento">
+      <div class="booking-hero">
+        <div>
+          <p class="eyebrow">Cartão real do convidado</p>
+          <h2>Envie o link e deixe a pessoa escolher</h2>
+          <p>Essa é a versão final que seu cliente recebe. As alterações do painel refletem aqui instantaneamente.</p>
+        </div>
+        <div class="cal-slot">
+          <p>Próximo slot livre</p>
+          <strong>Quarta · 15:30</strong>
+        </div>
+      </div>
+      <div class="booking-layout">
+        <div class="card booking-info">
+          <h3>Status do atendimento</h3>
+          <ul>
+            <li>💡 Preparando o roteiro personalizado</li>
+            <li>🗓️ Sincronizado com agenda da equipe</li>
+            <li>🤝 Confirmação automática por email</li>
+          </ul>
+          <p class="muted">Personalize o texto acima conforme seu processo.</p>
+        </div>
+        <div class="preview-card booking-card">
+          <div class="preview-hero">
+            <div class="hero-icon" id="publicHeroEmoji">✨</div>
+            <div>
+              <h3 id="publicTitle">Título do agendamento</h3>
+              <p id="publicDescription">Detalhes do atendimento.</p>
+            </div>
+          </div>
+          <div class="weekday-badges" id="publicWeekdays"></div>
+          <form id="publicBookingForm" class="preview-form"></form>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <template id="fieldRowTemplate">
+    <article class="field-row">
+      <div>
+        <p class="label"></p>
+        <span class="type"></span>
+      </div>
+      <div class="actions">
+        <button class="icon move-up" type="button" title="Subir">▲</button>
+        <button class="icon move-down" type="button" title="Descer">▼</button>
+        <button class="icon delete" type="button" title="Remover">✕</button>
+      </div>
+    </article>
+  </template>
+
+  <template id="selectTemplate">
+    <label class="preview-field">
+      <span></span>
+      <select></select>
+    </label>
+  </template>
+
+  <template id="inputTemplate">
+    <label class="preview-field">
+      <span></span>
+      <input />
+    </label>
+  </template>
+
+  <template id="textareaTemplate">
+    <label class="preview-field">
+      <span></span>
+      <textarea rows="3"></textarea>
+    </label>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
