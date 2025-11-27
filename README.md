@@ -617,3 +617,275 @@ Request → Controller → Service → Repository → Database
 ## Comandos do mongose
 
 https://mongoosejs.com/docs/queries.html
+
+# Adicionando JWT no nest.js
+
+## 🔐 1. Instalar as dependências
+
+```ts
+npm install @nestjs/jwt @nestjs/passport passport passport-jwt
+npm install bcrypt
+npm install -D @types/passport-jwt
+```
+
+Usaremos:
+
+Passport → autenticação
+
+JWT → geração de token
+
+bcrypt → hash de senha
+
+## 🧩 2. Criar o AuthModule
+```ts
+nest g module auth
+nest g service auth
+nest g controller auth
+```
+
+## 🧩 3. Criar o AuthModule
+```ts
+import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
+
+import { AuthService } from './auth.service';
+import { AuthController } from './auth.controller';
+import { JwtStrategy } from './jwt.strategy';
+
+@Module({
+  imports: [
+    PassportModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET || 'senha_super_secreta',
+      signOptions: { expiresIn: '1d' },
+    }),
+  ],
+  providers: [AuthService, JwtStrategy],
+  controllers: [AuthController],
+})
+export class AuthModule {}
+```
+
+## 🔐 4. Criar a JwtStrategy
+Ela valida automaticamente o token recebido nas rotas protegidas.
+
+auth/jwt.strategy.ts
+
+```ts
+import { Injectable } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
+import { ExtractJwt, Strategy } from 'passport-jwt';
+
+@Injectable()
+export class JwtStrategy extends PassportStrategy(Strategy) {
+  constructor() {
+    super({
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: process.env.JWT_SECRET || 'senha_super_secreta',
+    });
+  }
+
+  async validate(payload: any) {
+    return payload; // fica em req.user
+  }
+}
+```
+
+## 🔑 5. Gerar o token no login
+
+auth.service.ts
+
+```ts
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+
+@Injectable()
+export class AuthService {
+  constructor(private jwtService: JwtService) {}
+
+  async login(user: any, password: string) {
+    const valid = await bcrypt.compare(password, user.password);
+
+    if (!valid) {
+      throw new UnauthorizedException('Senha inválida');
+    }
+
+    const payload = {
+      sub: user._id,
+      email: user.email,
+      role: user.role,
+    };
+
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
+  }
+}
+
+```
+
+
+## 🌐 6. Controller de Login
+
+auth.controller.ts
+
+```ts
+import { Controller, Post, Body } from '@nestjs/common';
+import { AuthService } from './auth.service';
+
+@Controller('auth')
+export class AuthController {
+  constructor(private authService: AuthService) {}
+
+  @Post('login')
+  async login(@Body() data: any) {
+    const user = data.user; // normalmente vem do banco
+    const password = data.password;
+
+    return this.authService.login(user, password);
+  }
+}
+
+```
+
+## ✅ 7. Proteger rotas com JWT
+
+Qualquer rota pode ser protegida assim:
+
+```ts
+import { UseGuards, Controller, Get } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+
+@Controller('users')
+export class UsersController {
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get()
+  findAll() {
+    return 'Acesso liberado apenas com token';
+  }
+}
+
+```
+
+@UseGuards() é um DECORATOR que diz ao NestJS:
+
+“Antes de executar essa rota, passe pelo(s) GUARD(S) que eu informar.”
+
+O AuthGuard é uma classe/função nativa do módulo @nestjs/passport que integra o Passport ao NestJS para você usar estratégias como JWT de forma automática.
+
+O Passport é uma biblioteca de autenticação para aplicações em Node.js.
+
+Ele serve para padronizar e facilitar qualquer tipo de autenticação, como:
+
+JWT (token)
+
+Usuário e senha
+
+Google, GitHub, Facebook (OAuth)
+
+API Key
+
+Sessão por cookie
+
+Integração entre sistemas
+
+## 🧠 8. Acessar o usuário logado
+
+```ts
+@Get('perfil')
+@UseGuards(AuthGuard('jwt'))
+perfil(@Req() req) {
+  return req.user; // vem do payload do JWT
+}
+
+```
+
+## Configurar a env
+
+Se você ainda não configurou o ConfigModule, o process.env.JWT_SECRET pode vir undefined.
+
+No seu app.module.ts, configure assim:
+
+instalar as config 
+
+```cmd
+npm install @nestjs/config
+```
+
+```ts
+app.module.ts
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
+//deve ser o primeiro da lista dos imports
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true, // deixa disponível em toda a aplicação
+    }),
+    AuthModule,
+  ],
+})
+export class AppModule {}
+
+...
+jwt.strategy 
+import { Injectable } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
+import { ExtractJwt, Strategy } from 'passport-jwt';
+
+@Injectable()
+export class JwtStrategy extends PassportStrategy(Strategy) {
+  constructor() {
+
+    if (!process.env.JWT_SECRET) {
+      throw new Error('JWT_SECRET is not defined in environment variables');
+    }
+      
+
+    super({
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: process.env.JWT_SECRET,
+    });
+  }
+
+  async validate(payload: any) {
+    return payload; // fica em req.user
+  }
+}
+
+
+...
+auth.module
+import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { PassportModule } from '@nestjs/passport';
+import { UsersModule } from 'src/users/users.module';
+import { AuthService } from './auth.service';
+import { AuthController } from './auth.controller';
+import { JwtStrategy } from './jwt.strategy';
+
+@Module({
+  imports: [
+    UsersModule,
+    PassportModule,
+    ConfigModule, 
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        secret: config.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: '1d' },
+      }),
+    }),
+  ],
+  providers: [AuthService, JwtStrategy],
+  controllers: [AuthController],
+})
+export class AuthModule {}
+
+
+```
