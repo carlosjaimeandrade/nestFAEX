@@ -1,0 +1,38 @@
+{
+    "name": "Agendamento BLABLA BLA",
+    "description": "asdasdsadsadsadsadasdasdasdasd",
+    "color": "#680303",
+    "fields": [
+        {
+            "label": "Nome",
+            "type": "text",
+            "placeholder": "Informe seu nome",
+            "options": [],
+            "required": true
+        },
+        {
+            "label": "CPF",
+            "type": "text",
+            "placeholder": "digite o cpf",
+            "options": [],
+            "required": true
+        },
+        {
+            "label": "Data do agendamento",
+            "type": "date",
+            "placeholder": "data do agendamento",
+            "options": [],
+            "required": true
+        },
+        {
+            "label": "email",
+            "type": "email",
+            "placeholder": "informe o email",
+            "options": [],
+            "required": true
+        }
+    ],
+    "weekdays": [
+        "segunda"
+    ]
+}
