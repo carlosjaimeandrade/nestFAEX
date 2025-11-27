@@ -1,4 +1,4 @@
-Ôªø<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
@@ -18,10 +18,10 @@
   <div class="app-shell">
     <nav class="top-bar">
       <div class="brand">
-        <span class="brand-emoji">üåå</span>
+        <span class="brand-emoji">??</span>
         <div>
           <strong>Studio Aura</strong>
-          <small>experi√™ncias conectadas</small>
+          <small>experiÍncias conectadas</small>
         </div>
       </div>
       <div class="nav-buttons">
@@ -37,11 +37,11 @@
         <div class="login-copy">
           <p class="eyebrow">Bem-vindo de volta</p>
           <h1>Acesse o painel e personalize seus fluxos.</h1>
-          <p>Sincronize toda a experi√™ncia de agendamento com poucos cliques. Tudo fica salvo localmente para voc√™
+          <p>Sincronize toda a experiÍncia de agendamento com poucos cliques. Tudo fica salvo localmente para vocÍ
             continuar mais tarde.</p>
           <ul>
-            <li>Biblioteca de campos flex√≠vel;</li>
-            <li>Pr√©-visualiza√ß√£o instant√¢nea;</li>
+            <li>Biblioteca de campos flexÌvel;</li>
+            <li>PrÈ-visualizaÁ„o instant‚nea;</li>
             <li>Compartilhamento com o cliente.</li>
           </ul>
         </div>
@@ -57,7 +57,7 @@
             </label>
             <label>
               Senha
-              <input type="password" id="loginPassword" name="loginPassword" placeholder="‚Ä¢‚Ä¢‚Ä¢‚Ä¢‚Ä¢‚Ä¢‚Ä¢‚Ä¢" required>
+              <input type="password" id="loginPassword" name="loginPassword" placeholder="ïïïïïïïï" required>
             </label>
             <label class="checkbox remember">
               <input type="checkbox" id="rememberMe" name="rememberMe" checked>
@@ -73,13 +73,13 @@
     <section class="view admin-view" data-view="admin">
       <header class="hero">
         <div>
-          <p class="eyebrow">Studio de Experi√™ncias</p>
+          <p class="eyebrow">Studio de ExperiÍncias</p>
           <h1>Monte e teste sua tela de agendamento</h1>
           <p>Configure os campos que quiser, personalize cores e compartilhe o link perfeito com seu cliente. Tudo
             guardado no <strong>localStorage</strong> para continuar depois.</p>
         </div>
         <div class="hero-card">
-          <span>üõ†Ô∏è</span>
+          <span>???</span>
           <p>Modo administrador ativo</p>
         </div>
       </header>
@@ -94,13 +94,31 @@
             <button id="resetConfig" class="ghost-button" type="button">Restaurar default</button>
           </header>
 
-          <form id="blueprintForm" class="card">
-            <div class="field-group">
-              <label for="formTitle">T√≠tulo da tela</label>
+          <section class="card config-library">
+            <header class="config-library__header">
+              <div>
+                <p class="eyebrow">Configuracoes de agendamento</p>
+                <h3>Biblioteca de fluxos</h3>
+                <p class="muted micro">Apenas uma configuracao pode ficar ativa. Ative para editar.</p>
+              </div>
+              <form id="newConfigForm" class="config-inline-form">
+                <input id="newConfigName" type="text" placeholder="Nome da configuracao">
+                <label class="checkbox clone-toggle">
+                  <input type="checkbox" id="cloneActiveConfig" checked>
+                  <span>Clonar fluxo atual</span>
+                </label>
+                <button type="submit" class="primary">Criar</button>
+              </form>
+            </header>
+            <div id="configList" class="config-list"></div>
+          </section>
+
+          <form id="blueprintForm" class="card">`n            <div class="field-group">
+              <label for="formTitle">TÌtulo da tela</label>
               <input id="formTitle" type="text" placeholder="Ex.: Mentoria UX - agendamento" required>
             </div>
             <div class="field-group">
-              <label for="formDescription">Descri√ß√£o</label>
+              <label for="formDescription">DescriÁ„o</label>
               <textarea id="formDescription" rows="3" placeholder="Conte um pouco sobre o atendimento..."></textarea>
             </div>
             <div class="field-group dual">
@@ -110,11 +128,11 @@
               </div>
               <div>
                 <label for="heroEmoji">Emoji da capa</label>
-                <input id="heroEmoji" type="text" maxlength="2" placeholder="‚ú®">
+                <input id="heroEmoji" type="text" maxlength="2" placeholder="?">
               </div>
             </div>
             <div class="field-group">
-              <label>Dispon√≠vel nos dias</label>
+              <label>DisponÌvel nos dias</label>
               <div class="weekday-picker" id="weekdayPicker" aria-label="Selecionar dias da semana"></div>
               <p class="muted micro">Clique para ativar/desativar cada dia.</p>
             </div>
@@ -124,7 +142,7 @@
             <h3>Adicionar campo</h3>
             <form id="newFieldForm" class="field-grid">
               <label>
-                R√≥tulo
+                RÛtulo
                 <input id="fieldLabel" name="fieldLabel" type="text" placeholder="Nome completo" required>
               </label>
               <label>
@@ -133,11 +151,11 @@
                   <option value="text">Texto</option>
                   <option value="email">Email</option>
                   <option value="tel">Telefone</option>
-                  <option value="number">N√∫mero</option>
+                  <option value="number">N˙mero</option>
                   <option value="date">Data</option>
                   <option value="time">Hora</option>
-                  <option value="textarea">√Årea de texto</option>
-                  <option value="select">Sele√ß√£o</option>
+                  <option value="textarea">¡rea de texto</option>
+                  <option value="select">SeleÁ„o</option>
                 </select>
               </label>
               <label>
@@ -145,12 +163,12 @@
                 <input id="fieldPlaceholder" name="fieldPlaceholder" type="text" placeholder="Digite aqui...">
               </label>
               <label>
-                Op√ß√µes (para select)
-                <input id="fieldOptions" name="fieldOptions" type="text" placeholder="op√ß√£o 1, op√ß√£o 2">
+                OpÁıes (para select)
+                <input id="fieldOptions" name="fieldOptions" type="text" placeholder="opÁ„o 1, opÁ„o 2">
               </label>
               <label class="checkbox">
                 <input id="fieldRequired" name="fieldRequired" type="checkbox" checked>
-                <span>Obrigat√≥rio</span>
+                <span>ObrigatÛrio</span>
               </label>
               <button type="submit" class="primary">Adicionar</button>
             </form>
@@ -170,17 +188,17 @@
         <section class="panel preview-panel">
           <header class="panel-header">
             <div>
-              <p class="eyebrow">Experi√™ncia do convidado</p>
-              <h2>Pr√©via ao vivo</h2>
+              <p class="eyebrow">ExperiÍncia do convidado</p>
+              <h2>PrÈvia ao vivo</h2>
             </div>
             <div class="live-pill">ao vivo</div>
           </header>
           <div class="preview-card">
             <div class="preview-hero">
-              <div class="hero-icon" id="heroEmojiPreview">‚ú®</div>
+              <div class="hero-icon" id="heroEmojiPreview">?</div>
               <div>
-                <h3 id="previewTitle">T√≠tulo aqui</h3>
-                <p id="previewDescription">Descri√ß√£o do fluxo.</p>
+                <h3 id="previewTitle">TÌtulo aqui</h3>
+                <p id="previewDescription">DescriÁ„o do fluxo.</p>
               </div>
             </div>
             <div class="weekday-badges" id="previewWeekdays"></div>
@@ -188,8 +206,8 @@
           </div>
           <section class="card submissions">
             <header>
-              <h3>√öltimas simula√ß√µes</h3>
-              <button id="clearSubmissions" type="button" class="ghost-button">Limpar hist√≥rico</button>
+              <h3>⁄ltimas simulaÁıes</h3>
+              <button id="clearSubmissions" type="button" class="ghost-button">Limpar histÛrico</button>
             </header>
             <div id="submissionsLog" class="log"></div>
           </section>
@@ -200,30 +218,30 @@
     <section class="view booking-view" data-view="agendamento">
       <div class="booking-hero">
         <div>
-          <p class="eyebrow">Cart√£o real do convidado</p>
+          <p class="eyebrow">Cart„o real do convidado</p>
           <h2>Envie o link e deixe a pessoa escolher</h2>
-          <p>Essa √© a vers√£o final que seu cliente recebe. As altera√ß√µes do painel refletem aqui instantaneamente.</p>
+          <p>Essa È a vers„o final que seu cliente recebe. As alteraÁıes do painel refletem aqui instantaneamente.</p>
         </div>
         <div class="cal-slot">
-          <p>Pr√≥ximo slot livre</p>
-          <strong>Quarta ¬∑ 15:30</strong>
+          <p>PrÛximo slot livre</p>
+          <strong>Quarta ∑ 15:30</strong>
         </div>
       </div>
       <div class="booking-layout">
         <div class="card booking-info">
           <h3>Status do atendimento</h3>
           <ul>
-            <li>üí° Preparando o roteiro personalizado</li>
-            <li>üóìÔ∏è Sincronizado com agenda da equipe</li>
-            <li>ü§ù Confirma√ß√£o autom√°tica por email</li>
+            <li>?? Preparando o roteiro personalizado</li>
+            <li>??? Sincronizado com agenda da equipe</li>
+            <li>?? ConfirmaÁ„o autom·tica por email</li>
           </ul>
           <p class="muted">Personalize o texto acima conforme seu processo.</p>
         </div>
         <div class="preview-card booking-card">
           <div class="preview-hero">
-            <div class="hero-icon" id="publicHeroEmoji">‚ú®</div>
+            <div class="hero-icon" id="publicHeroEmoji">?</div>
             <div>
-              <h3 id="publicTitle">T√≠tulo do agendamento</h3>
+              <h3 id="publicTitle">TÌtulo do agendamento</h3>
               <p id="publicDescription">Detalhes do atendimento.</p>
             </div>
           </div>
@@ -241,9 +259,9 @@
         <span class="type"></span>
       </div>
       <div class="actions">
-        <button class="icon move-up" type="button" title="Subir">‚ñ≤</button>
-        <button class="icon move-down" type="button" title="Descer">‚ñº</button>
-        <button class="icon delete" type="button" title="Remover">‚úï</button>
+        <button class="icon move-up" type="button" title="Subir">?</button>
+        <button class="icon move-down" type="button" title="Descer">?</button>
+        <button class="icon delete" type="button" title="Remover">?</button>
       </div>
     </article>
   </template>
@@ -273,3 +291,6 @@
 </body>
 
 </html>
+
+
+
