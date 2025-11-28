@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Users } from "../schema/users.schema";
 import { Model } from "mongoose";
-import { UsersParamDto } from "../dto/users-param.dto";
 
 @Injectable()
 export class UsersRepository {
