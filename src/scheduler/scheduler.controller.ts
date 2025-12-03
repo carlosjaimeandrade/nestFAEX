@@ -1,7 +1,10 @@
-import { Controller, Post, Get, Patch, Body } from '@nestjs/common';
+import { Controller, Post, Get, Patch, Body, Query, Param, UseGuards } from '@nestjs/common';
 import { SchedulerService } from './scheduler.service';
 import { CreateSchedulerConfigDto } from './dto/create-scheduler-config.dto';
-
+import { QuerySchedulerConfigDto } from './dto/query-scheduler-config.dto';
+import { ParamIdSchedulerDto } from './dto/param-id-scheduler-config.dto';
+import { UpdateSchedulerConfigDto } from './dto/update-scheduler-config.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('scheduler')
 export class SchedulerController {
@@ -11,6 +14,7 @@ export class SchedulerController {
     )
     {}
 
+    @UseGuards(AuthGuard('jwt'))
     @Post('/config')
     async createConfig(@Body() body: CreateSchedulerConfigDto) {
         const config = await this.schedulerService.createConfig(body)
@@ -22,16 +26,26 @@ export class SchedulerController {
     }
 
     @Get('/config')
-    async getConfig() {
+    async getConfig(@Query() query: QuerySchedulerConfigDto) {
+        const configs = await this.schedulerService.getConfigs(query.status)
+
         return {
-            message: "dados buscado com sucesso"
+            total: configs.length,
+            configs,
+            query
         }
     }
 
-    @Patch('/config')
-    async updateConfig() {
+    @UseGuards(AuthGuard('jwt'))
+    @Patch('/config/:id')
+    async updateConfig(
+        @Param() param: ParamIdSchedulerDto,
+        @Body() body: UpdateSchedulerConfigDto
+    ) {
+        const update = await this.schedulerService.updateConfig(param.id, body)
+
         return {
-            message: "dados atualizado com sucesso"
+            update
         }
     }
 }

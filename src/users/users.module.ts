@@ -13,6 +13,6 @@ import { BcryptHelper } from './helpers/bcrypt.helper';
   ],
   controllers: [UsersController],
   providers: [UsersService, UsersRepository, BcryptHelper],
-  exports: []
+  exports: [UsersRepository, BcryptHelper]
 })
 export class UsersModule {}

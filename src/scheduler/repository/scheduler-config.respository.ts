@@ -17,8 +17,8 @@ export class SchedulerConfigRepository {
         return createUser.save()
     }
 
-    async findAll(): Promise<SchedulerConfig[]> {
-        return this.schedulerConfig.find()
+    async findAll(filter: object = {}): Promise<SchedulerConfig[]> {
+        return this.schedulerConfig.find(filter)
     }
 
     async findById(id: string): Promise<SchedulerConfig | null> {
@@ -29,7 +29,7 @@ export class SchedulerConfigRepository {
         return this.schedulerConfig.findOne(filter)
     }
 
-    async update(id: string, data: Partial<SchedulerConfig>) {
+    async update(id: string, data: Partial<SchedulerConfig>): Promise<SchedulerConfig | null> {
         return this.schedulerConfig.findByIdAndUpdate(id, data, {
             new: true
         })

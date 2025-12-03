@@ -58,7 +58,9 @@ const defaultConfig = {
 };
 
 const state = {
-  blueprint: loadConfig(),
+  configs: loadConfigCollection(),
+  activeConfigId: null,
+  blueprint: null,
   submissions: loadSubmissions(),
   user: loadUser(),
   currentView: null,
@@ -93,13 +95,22 @@ const els = {
   sessionChip: document.getElementById("sessionChip"),
   navButtons: document.querySelectorAll("[data-view-target]"),
   viewSections: document.querySelectorAll("[data-view]"),
+  configList: document.getElementById("configList"),
+  newConfigForm: document.getElementById("newConfigForm"),
+  newConfigName: document.getElementById("newConfigName"),
+  cloneActiveConfig: document.getElementById("cloneActiveConfig"),
   selectTemplate: document.getElementById("selectTemplate"),
   inputTemplate: document.getElementById("inputTemplate"),
   textareaTemplate: document.getElementById("textareaTemplate"),
   fieldRowTemplate: document.getElementById("fieldRowTemplate"),
 };
 
+const initialActiveConfig = getActiveConfig();
+state.activeConfigId = initialActiveConfig.id;
+state.blueprint = initialActiveConfig.blueprint;
+
 hydrateInitialState();
+renderConfigList();
 renderFieldList();
 renderForms();
 renderSubmissions();
@@ -158,6 +169,8 @@ function bindEvents() {
     renderForms();
   });
 
+  els.newConfigForm.addEventListener("submit", handleNewConfigSubmit);
+
   els.bookingForm.addEventListener("submit", handleBookingSubmit);
   els.publicBookingForm.addEventListener("submit", handlePublicBookingSubmit);
 
@@ -182,6 +195,8 @@ function bindEvents() {
   });
 
   els.loginForm.addEventListener("submit", handleLoginSubmit);
+
+  els.configList.addEventListener("click", handleConfigListClick);
 
   els.navButtons.forEach((button) => {
     button.addEventListener("click", () => {
@@ -239,6 +254,166 @@ function handleLoginSubmit(event) {
   flashMessage("Login efetuado. Personalize seu fluxo!");
 }
 
+function handleNewConfigSubmit(event) {
+  event.preventDefault();
+  const name = (els.newConfigName.value || "").trim();
+  const baseBlueprint = els.cloneActiveConfig.checked ? clone(state.blueprint) : clone(defaultConfig);
+  const entry = makeConfigEntry({
+    name: name || `Fluxo ${state.configs.items.length + 1}`,
+    blueprint: baseBlueprint,
+  });
+  state.configs.items.push(entry);
+  setActiveConfig(entry.id);
+  els.newConfigForm.reset();
+  els.cloneActiveConfig.checked = true;
+  flashMessage("Configuracao criada e ativada.");
+}
+
+function handleConfigListClick(event) {
+  const button = event.target.closest("button[data-action]");
+  if (!button) return;
+  const action = button.dataset.action;
+  const id = button.dataset.id;
+  if (!id) return;
+
+  if (action === "activate") {
+    if (id !== state.activeConfigId) {
+      setActiveConfig(id);
+      flashMessage("Configuracao ativada para edicao.");
+    }
+    return;
+  }
+
+  if (action === "rename") {
+    const current = state.configs.items.find((item) => item.id === id);
+    const nextName = prompt("Novo nome da configuracao", current?.name || "");
+    if (nextName && nextName.trim()) {
+      renameConfig(id, nextName.trim());
+      flashMessage("Configuracao renomeada.");
+    }
+    return;
+  }
+
+  if (action === "delete") {
+    deleteConfig(id);
+  }
+}
+
+function setActiveConfig(id) {
+  const target = state.configs.items.find((item) => item.id === id);
+  if (!target) return;
+  state.activeConfigId = id;
+  state.configs.activeId = id;
+  state.blueprint = target.blueprint;
+  persistCollection();
+  hydrateInitialState();
+  renderFieldList();
+  renderForms();
+  renderConfigList();
+}
+
+function renameConfig(id, name) {
+  const target = state.configs.items.find((item) => item.id === id);
+  if (!target) return;
+  target.name = name;
+  if (id === state.activeConfigId && !state.blueprint.title) {
+    state.blueprint.title = name;
+    hydrateInitialState();
+    renderForms();
+  }
+  persistCollection();
+  renderConfigList();
+}
+
+function deleteConfig(id) {
+  if (state.configs.items.length <= 1) {
+    flashMessage("Mantenha pelo menos uma configuracao ativa.");
+    return;
+  }
+  const index = state.configs.items.findIndex((item) => item.id === id);
+  if (index === -1) return;
+  const deletingActive = state.activeConfigId === id;
+  state.configs.items.splice(index, 1);
+  if (deletingActive) {
+    const fallback = state.configs.items[0];
+    state.activeConfigId = fallback.id;
+    state.configs.activeId = fallback.id;
+    state.blueprint = fallback.blueprint;
+    hydrateInitialState();
+    renderFieldList();
+    renderForms();
+  }
+  persistCollection();
+  renderConfigList();
+  flashMessage("Configuracao removida.");
+}
+
+function renderConfigList() {
+  if (!els.configList) return;
+  els.configList.innerHTML = "";
+  if (!state.configs.items.length) {
+    els.configList.innerHTML = '<p class="muted">Nenhuma configuracao salva.</p>';
+    return;
+  }
+
+  state.configs.items.forEach((config) => {
+    const isActive = config.id === state.activeConfigId;
+    const row = document.createElement("article");
+    row.className = `config-row${isActive ? " active" : ""}`;
+    row.dataset.id = config.id;
+
+    const title = document.createElement("div");
+    title.className = "config-title";
+    title.textContent = config.name || config.blueprint.title || "Configuracao";
+
+    const meta = document.createElement("p");
+    meta.className = "config-meta muted";
+    const fieldCount = config.blueprint.fields?.length || 0;
+    const dayCount = normalizeWeekdays(config.blueprint.weekdays).length;
+    meta.textContent = `${fieldCount} campos - ${dayCount} dias`;
+
+    const info = document.createElement("div");
+    info.append(title, meta);
+
+    const actions = document.createElement("div");
+    actions.className = "config-actions";
+
+    const status = document.createElement("span");
+    status.className = `status-pill ${isActive ? "active" : ""}`;
+    status.textContent = isActive ? "Ativa" : "Inativa";
+    actions.appendChild(status);
+
+    const activate = document.createElement("button");
+    activate.type = "button";
+    activate.className = "ghost-button";
+    activate.dataset.action = "activate";
+    activate.dataset.id = config.id;
+    activate.textContent = isActive ? "Em edicao" : "Ativar";
+    if (isActive) activate.disabled = true;
+    actions.appendChild(activate);
+
+    const rename = document.createElement("button");
+    rename.type = "button";
+    rename.className = "ghost-button";
+    rename.dataset.action = "rename";
+    rename.dataset.id = config.id;
+    rename.textContent = "Renomear";
+    actions.appendChild(rename);
+
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "icon danger";
+    remove.dataset.action = "delete";
+    remove.dataset.id = config.id;
+    remove.textContent = "Excluir";
+    if (state.configs.items.length === 1) remove.disabled = true;
+    actions.appendChild(remove);
+
+    row.append(info, actions);
+    els.configList.appendChild(row);
+  });
+}
+
 function renderForms() {
   renderPreview();
   renderPublicView();
@@ -246,18 +421,18 @@ function renderForms() {
 }
 
 function renderPreview() {
-  els.previewTitle.textContent = state.blueprint.title || "Título do agendamento";
+  els.previewTitle.textContent = state.blueprint.title || "Titulo do agendamento";
   els.previewDescription.textContent =
     state.blueprint.description || "Descreva seu fluxo para o convidado.";
-  els.heroEmojiPreview.textContent = (state.blueprint.heroEmoji || "✨").slice(0, 2);
+  els.heroEmojiPreview.textContent = (state.blueprint.heroEmoji || "??").slice(0, 2);
   populateBookingForm(els.bookingForm, "Simular agendamento");
 }
 
 function renderPublicView() {
-  els.publicTitle.textContent = state.blueprint.title || "Título do agendamento";
+  els.publicTitle.textContent = state.blueprint.title || "Titulo do agendamento";
   els.publicDescription.textContent =
     state.blueprint.description || "Adicione detalhes para orientar o convidado.";
-  els.publicHeroEmoji.textContent = (state.blueprint.heroEmoji || "✨").slice(0, 2);
+  els.publicHeroEmoji.textContent = (state.blueprint.heroEmoji || "??").slice(0, 2);
   populateBookingForm(els.publicBookingForm, "Confirmar agendamento");
 }
 
@@ -565,36 +740,100 @@ function normalizeWeekdays(list) {
   return list.filter((day) => valid.has(day));
 }
 
-function loadConfig() {
+function normalizeBlueprint(data) {
+  if (!data || typeof data !== "object") return clone(defaultConfig);
+  const fields = Array.isArray(data.fields) ? data.fields : defaultConfig.fields;
+  const weekdays = normalizeWeekdays(data.weekdays ?? defaultConfig.weekdays);
+  return {
+    title: data.title ?? defaultConfig.title,
+    description: data.description ?? defaultConfig.description,
+    accentColor: data.accentColor ?? defaultConfig.accentColor,
+    heroEmoji: data.heroEmoji ?? defaultConfig.heroEmoji,
+    fields: fields.map((field, index) => ({
+      id: field.id ?? `field-${index}-${cryptoRandom()}`,
+      label: field.label ?? `Campo ${index + 1}`,
+      type: field.type ?? "text",
+      placeholder: field.placeholder ?? "",
+      options: field.options ?? [],
+      required: Boolean(field.required),
+    })),
+    weekdays,
+  };
+}
+
+function makeConfigEntry(rawConfig = {}) {
+  const blueprint = normalizeBlueprint(rawConfig.blueprint ?? rawConfig);
+  return {
+    id: rawConfig.id || `cfg-${cryptoRandom()}`,
+    name: rawConfig.name || blueprint.title || "Configuracao",
+    blueprint,
+    updatedAt: rawConfig.updatedAt || new Date().toISOString(),
+  };
+}
+
+function buildDefaultCollection() {
+  const entry = makeConfigEntry({
+    id: `cfg-${cryptoRandom()}`,
+    name: "Fluxo padrao",
+    blueprint: defaultConfig,
+  });
+  return { items: [entry], activeId: entry.id };
+}
+
+function loadConfigCollection() {
   const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return clone(defaultConfig);
+  if (!raw) return buildDefaultCollection();
   try {
     const data = JSON.parse(raw);
-    const fields = Array.isArray(data.fields) ? data.fields : defaultConfig.fields;
-    const weekdays = normalizeWeekdays(data.weekdays ?? defaultConfig.weekdays);
-    return {
-      title: data.title ?? defaultConfig.title,
-      description: data.description ?? defaultConfig.description,
-      accentColor: data.accentColor ?? defaultConfig.accentColor,
-      heroEmoji: data.heroEmoji ?? defaultConfig.heroEmoji,
-      fields: fields.map((field, index) => ({
-        id: field.id ?? `field-${index}-${cryptoRandom()}`,
-        label: field.label ?? `Campo ${index + 1}`,
-        type: field.type ?? "text",
-        placeholder: field.placeholder ?? "",
-        options: field.options ?? [],
-        required: Boolean(field.required),
-      })),
-      weekdays,
-    };
+    if (Array.isArray(data.items)) {
+      const items = data.items.map((item) => makeConfigEntry(item));
+      const activeId = items.find((item) => item.id === data.activeId)?.id || items[0]?.id;
+      return { items, activeId };
+    }
+
+    if (data && typeof data === "object" && Array.isArray(data.fields)) {
+      const entry = makeConfigEntry({ ...data });
+      return { items: [entry], activeId: entry.id };
+    }
   } catch (error) {
-    console.warn("Erro ao ler configuração, usando padrão.", error);
-    return clone(defaultConfig);
+    console.warn("Erro ao ler colecao de configuracoes. Usando padrao.", error);
   }
+  return buildDefaultCollection();
+}
+
+function getActiveConfig() {
+  const collection = state?.configs ?? buildDefaultCollection();
+  const items = collection.items || [];
+  if (!items.length) {
+    const fallback = buildDefaultCollection();
+    state.configs = fallback;
+    return fallback.items[0];
+  }
+  const active = items.find((item) => item.id === collection.activeId) || items[0];
+  return active;
 }
 
 function persistConfig() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state.blueprint));
+  if (!state.configs.items.length) return;
+  const activeId = state.activeConfigId || state.configs.activeId || state.configs.items[0].id;
+  state.activeConfigId = activeId;
+  state.configs.activeId = activeId;
+  const index = state.configs.items.findIndex((item) => item.id === activeId);
+  if (index === -1) return;
+  const current = state.configs.items[index];
+  const resolvedName = current.name || state.blueprint.title || "Configuracao";
+  state.configs.items[index] = {
+    ...current,
+    name: resolvedName,
+    blueprint: state.blueprint,
+    updatedAt: new Date().toISOString(),
+  };
+  persistCollection();
+  renderConfigList();
+}
+
+function persistCollection() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state.configs));
 }
 
 function loadSubmissions() {
@@ -629,3 +868,8 @@ function persistUser(user) {
 function removeUser() {
   localStorage.removeItem(USER_KEY);
 }
+
+
+
+
+
